@@ -88,7 +88,25 @@ public class c_rmifs {
 					System.out.println ( s.borrarArchivo());
 					break;
 				case "info":
-					System.out.println ( "Mostrando los posibles comandos.\n" );
+					System.out.println 
+					( 	"Comandos disponibles:\n" +
+						"rls\t\tMuestra la lista de archivos disponibles en servidor " +
+							"\n\t\tcentralizado.\n" +
+						"lls\t\tMuestra la lista de archivos disponibles localmente.\n" +
+						"sub archivo\tSube un archivo al servidor remoto " +
+							"(Ej: sub clase.pdf). El\n\t\tarchivo especificado como " +
+							"parámetro debe estar en la lista\n\t\tde archivos " +
+							"disponibles para el cliente localmente.\n" +
+						"baj archivo\tBaja un archivo desde el servidor remoto" +
+							"\n\t\t(Ej: baj ejemplo.c). El archivo especificado debe " +
+							"estar en\n\t\tla lista de archivos disponibles en el servidor " +
+							"\n\t\tcentralizado para que el comando funcione " +
+							"adecuadamente.\n" +
+						"bor archivo\tBorra el archivo en el servidor remoto.\n" +
+						"info\t\tMuestra la lista de comandos que el cliente puede " +
+							"usar con\n\t\tuna breve descripción de cada uno de ellos.\n" +
+						"sal\t\tTermina la ejecución del programa cliente.\n" +
+						"\n" );
 					break;
 				case "sal":
 					System.out.println ( "Hasta luego.\n" );
