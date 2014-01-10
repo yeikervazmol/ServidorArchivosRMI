@@ -4,32 +4,86 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
 
+
+
 public class c_rmifs {
 	
 	public static Servicios s;
 	public static Boolean salir;
+	public static String nombre;
+	public static String clave;
+	public static Boolean hayArchivoCom = false;
+	public static Boolean hayArchivoUsu = false;
+	public static String archivoCom = "";
+	public static String archivoUsu = "";
 	
 	public static void main(String[] args) {
 		try {
 			
-			s = (Servicios)
-				Naming.lookup("rmi://localhost:2000/Servicios");
-			String archivoE = "";
-			Boolean hayArchivo = false;
+			String servidor = "";
+			String puerto = "";
+			String [] datosUsuario;
+			// Verificacion de que no se repite algun parametro.
+			Boolean[] opciones = { false, false, false, false };
+			
+			
+			int argv = args.length;
 			String comando;
 			salir = false;
 			BufferedReader comandos = null;
+			BufferedReader usuarios = null;
 			
-			switch (args.length) {
-				case 1:
-					hayArchivo = true;
-					archivoE = args[0];
-					comandos = new BufferedReader(new FileReader(new File(archivoE)));
-					break;
 			
+			if (argv % 2 != 0){
+				System.out.println ("Sintaxis de invocacion incorrecta.");
+				return;
+			} else {
+				for(int j = 0; j < argv; j = j + 2){
+
+					if(args[j].equals("-f") && !opciones[0]){
+						hayArchivoUsu = true;
+						archivoUsu = args[j+1];
+						usuarios = new BufferedReader(new FileReader(new File(archivoUsu)));
+						opciones[0] = true;
+						
+					}else if(args[j].equals("-p") && !opciones[1]){
+						puerto = args[j+1];
+						opciones[1] = true;
+						
+					}else if(args[j].equals("-m") && !opciones[2]){
+						servidor = args[j+1];
+						opciones[2] = true;
+						
+					}else if(args[j].equals("-c") && !opciones[3]){						
+						hayArchivoCom = true;
+						archivoCom = args[j+1];
+						comandos = new BufferedReader(new FileReader(new File(archivoCom)));
+						opciones[3] = true;
+						
+					} else {
+						System.out.println ("Sintaxis de invocacion incorrecta.");
+						return;
+					}
+				}
 			}
-			System.out.println ("\nBienvenido\n");
-			if (hayArchivo){
+			
+			s = (Servicios)
+					Naming.lookup("rmi://" + servidor + ":" + puerto + "/Servicios");
+			
+			if(hayArchivoUsu){
+				datosUsuario = (usuarios.readLine()).split(":");
+				nombre = datosUsuario[0];
+				clave = datosUsuario[1];
+			}else{
+				System.out.print ("Introduzca su nombre de usuario: ");
+				nombre = System.console().readLine();
+				
+				clave = new String(System.console().readPassword("\nIntroduzca su clave: "));
+			}
+
+			System.out.println (s.iniciarSesion(nombre,clave));
+			
+			if (hayArchivoCom){
 				while( ((comando = comandos.readLine()) != null) && !salir ){
 					ejecutarComando(comando);
 				}
@@ -68,24 +122,67 @@ public class c_rmifs {
 			System.out.println (e);
 		}
 	}
+	
+	public static void mostrarArchivosLocales(){
+		String path = "."; 
+		
+		String files;
+		File folder = new File(path);
+		File[] listOfFiles = folder.listFiles(); 
+ 
+		for (int i = 0; i < listOfFiles.length; i++){
+ 
+			if (	listOfFiles[i].isFile()){
+				files = listOfFiles[i].getName();
+				if	( !(files.equals("Servicios.java")
+						|| files.equals("Servicios.class")
+						|| files.equals("c_rmifs.java")
+						|| files.equals("c_rmifs.class")
+						)
+					){
+					
+					
+					if(hayArchivoUsu && hayArchivoCom ){
+						if(!(files.equals(archivoUsu) || files.equals(archivoCom)) ){
+							System.out.println("\t" + files);
+						}
+						
+					} else if(!hayArchivoUsu && hayArchivoCom ){
+						if(!files.equals(archivoCom) ){
+							System.out.println("\t" + files);
+						}
+						
+					} else if(hayArchivoUsu && !hayArchivoCom ){
+						if(!files.equals(archivoUsu)){
+							System.out.println("\t" + files);
+						}
+					} else if(!hayArchivoUsu && !hayArchivoCom ){
+						System.out.println("\t" + files);
+					}				
+					
+				}
+			}
+		}
+	}
 
 	public static void ejecutarComando(String comando){
 		try{
 			switch (comando){
 				case "rls":
-					System.out.println ( s.listarArchivosEnServidor());
+					System.out.println ( s.listarArchivosEnServidor(nombre, clave));
 					break;
 				case "lls":
-					System.out.println ( "Listando archivos locales.\n" );
+					System.out.println ( "\nArchivos locales:\n" );
+					mostrarArchivosLocales();
 					break;
 				case "sub archivo":
-					System.out.println ( s.subirArchivo());
+					System.out.println ( s.subirArchivo(nombre, clave));
 					break;
 				case "baj archivo":
-					System.out.println ( s.bajarArchivo());
+					System.out.println ( s.bajarArchivo(nombre, clave));
 					break;
 				case "bor archivo":
-					System.out.println ( s.borrarArchivo());
+					System.out.println ( s.borrarArchivo(nombre, clave));
 					break;
 				case "info":
 					System.out.println 
@@ -109,6 +206,7 @@ public class c_rmifs {
 						"\n" );
 					break;
 				case "sal":
+					System.out.println (s.cerrarSesion(nombre, clave));
 					System.out.println ( "Hasta luego.\n" );
 					salir = true;
 					break;
