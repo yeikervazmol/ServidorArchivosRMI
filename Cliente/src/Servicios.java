@@ -19,4 +19,16 @@ public interface Servicios
 	
 	public String borrarArchivo(String nombre, String clave)
 		throws java.rmi.RemoteException;
+	
+	public void mostrarInformacion(String nombre, String clave)
+			throws java.rmi.RemoteException;
+	
+	public void mostrarArchivosLocales(String nombre, String clave)
+			throws java.rmi.RemoteException;
+	
+	public void inicializarLog()
+		throws java.rmi.RemoteException;
+		
+	public String entregarLog(String clave)
+		throws java.rmi.RemoteException;
 }
