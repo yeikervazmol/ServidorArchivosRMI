@@ -24,7 +24,6 @@ public class c_rmifs {
 			// Verificacion de que no se repite algun parametro.
 			Boolean[] opciones = { false, false, false, false };
 			
-			
 			int argv = args.length;
 			String comando;
 			salir = false;
@@ -179,15 +178,30 @@ public class c_rmifs {
 		}
 	}
 
+	
 	public static void ejecutarComando(String comando){
 		try{
 			if (comando.equals("rls")) {
-				System.out.println ( "\nArchivos en servidor remoto:\n" );
-				System.out.println ( s.listarArchivosEnServidor(nombre, clave));
+				
+				String listaArchivos = s.listarArchivosEnServidor(nombre, clave);
+				if (!(listaArchivos.equals("false"))) {
+					System.out.println ( "\nArchivos en servidor remoto:\n" );
+					System.out.println (listaArchivos);
+				} else {
+					System.out.println("Error de autenticacion.");
+					System.exit(0);
+				}
+				
 			} else if (comando.equals("lls")) {
-				s.mostrarArchivosLocales(nombre, clave);
-				System.out.println ( "\nArchivos locales:\n" );
-				mostrarArchivosLocales();
+				
+				if (s.mostrarArchivosLocales(nombre, clave)){
+					System.out.println ( "\nArchivos locales:\n" );
+					mostrarArchivosLocales();
+				} else {
+					System.out.println("Error de autenticacion.");
+					System.exit(0);
+				}			
+				
 			} else if (comando.equals("sub archivo")) {
 				System.out.println ( s.subirArchivo(nombre, clave));
 			} else if  (comando.equals("baj archivo")){
@@ -195,30 +209,41 @@ public class c_rmifs {
 			} else if  (comando.equals("bor archivo")){
 				System.out.println ( s.borrarArchivo(nombre, clave));
 			} else if  (comando.equals("info")){
-				s.mostrarInformacion(nombre, clave);
-				System.out.println 
-				( 	"Comandos disponibles:\n" +
-					"rls\t\tMuestra la lista de archivos disponibles en servidor " +
-						"\n\t\tcentralizado.\n" +
-					"lls\t\tMuestra la lista de archivos disponibles localmente.\n" +
-					"sub archivo\tSube un archivo al servidor remoto " +
-						"(Ej: sub clase.pdf). El\n\t\tarchivo especificado como " +
-						"parámetro debe estar en la lista\n\t\tde archivos " +
-						"disponibles para el cliente localmente.\n" +
-					"baj archivo\tBaja un archivo desde el servidor remoto" +
-						"\n\t\t(Ej: baj ejemplo.c). El archivo especificado debe " +
-						"estar en\n\t\tla lista de archivos disponibles en el servidor " +
-						"\n\t\tcentralizado para que el comando funcione " +
-						"adecuadamente.\n" +
-					"bor archivo\tBorra el archivo en el servidor remoto.\n" +
-					"info\t\tMuestra la lista de comandos que el cliente puede " +
-						"usar con\n\t\tuna breve descripción de cada uno de ellos.\n" +
-					"sal\t\tTermina la ejecución del programa cliente.\n" +
-					"\n" );
+				
+				if (s.mostrarInformacion(nombre, clave)){
+					System.out.println 
+					( 	"Comandos disponibles:\n" +
+						"rls\t\tMuestra la lista de archivos disponibles en servidor " +
+							"\n\t\tcentralizado.\n" +
+						"lls\t\tMuestra la lista de archivos disponibles localmente.\n" +
+						"sub archivo\tSube un archivo al servidor remoto " +
+							"(Ej: sub clase.pdf). El\n\t\tarchivo especificado como " +
+							"parámetro debe estar en la lista\n\t\tde archivos " +
+							"disponibles para el cliente localmente.\n" +
+						"baj archivo\tBaja un archivo desde el servidor remoto" +
+							"\n\t\t(Ej: baj ejemplo.c). El archivo especificado debe " +
+							"estar en\n\t\tla lista de archivos disponibles en el servidor " +
+							"\n\t\tcentralizado para que el comando funcione " +
+							"adecuadamente.\n" +
+						"bor archivo\tBorra el archivo en el servidor remoto.\n" +
+						"info\t\tMuestra la lista de comandos que el cliente puede " +
+							"usar con\n\t\tuna breve descripción de cada uno de ellos.\n" +
+						"sal\t\tTermina la ejecución del programa cliente.\n" +
+						"\n" );
+				} else {
+					System.out.println("Error de autenticacion.");
+					System.exit(0);
+				}	
+				
 			}  else if  (comando.equals("sal")) {
-				System.out.println (s.cerrarSesion(nombre, clave));
+				if (s.cerrarSesion(nombre,clave)){
+					System.out.println("Cerrando sesion.");
+				} else {
+					System.out.println("Error de autenticacion.");
+					System.exit(0);
+				}
 				System.out.println ( "Hasta luego.\n" );
-				salir = true;				
+				System.exit(0);				
 			} else { 
 				System.out.println ( "Opcion invalida. Intente de nuevo.\n" );
 				System.out.println 
@@ -244,7 +269,7 @@ public class c_rmifs {
 		} catch (RemoteException re) {
 			System.out.println ();
 			System.out.println ("Problemas de conexion con el servidor.");
-			salir = true;
+			System.exit(0);
 		}
 	}
 }

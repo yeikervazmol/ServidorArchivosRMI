@@ -5,7 +5,7 @@ public interface Servicios
 	public Boolean iniciarSesion(String nombre, String clave)
 			throws java.rmi.RemoteException;
 	
-	public String cerrarSesion(String nombre, String clave)
+	public Boolean cerrarSesion(String nombre, String clave)
 			throws java.rmi.RemoteException;
 	
 	public String listarArchivosEnServidor(String nombre, String clave)
@@ -20,10 +20,10 @@ public interface Servicios
 	public String borrarArchivo(String nombre, String clave)
 		throws java.rmi.RemoteException;
 	
-	public void mostrarInformacion(String nombre, String clave)
+	public Boolean mostrarInformacion(String nombre, String clave)
 			throws java.rmi.RemoteException;
 	
-	public void mostrarArchivosLocales(String nombre, String clave)
+	public Boolean mostrarArchivosLocales(String nombre, String clave)
 			throws java.rmi.RemoteException;
 	
 	public void inicializarLog()

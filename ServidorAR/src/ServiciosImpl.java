@@ -58,8 +58,12 @@ public class ServiciosImpl
 		return true;
 	}
 	
-	public String cerrarSesion(String nombre, String clave)
+	public Boolean cerrarSesion(String nombre, String clave)
 	throws java.rmi.RemoteException {
+		
+		if (!(a.autenticarUsuario(nombre, clave))) { 
+			return false;
+		}
 		
 		String timeStamp = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Calendar.getInstance().getTime());
 		
@@ -71,11 +75,15 @@ public class ServiciosImpl
 		logs[indice] = "(" + timeStamp + ") " + "Cierre de sesion por: " + nombre;
 		indice++;
 		
-		return "Cerrando sesion.\n";
+		return true;
 	}
 	
 	public String listarArchivosEnServidor(String nombre, String clave)
 	throws java.rmi.RemoteException {
+		
+		if (!(a.autenticarUsuario(nombre, clave))) { 
+			return "false";
+		}
 		
 		String timeStamp = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Calendar.getInstance().getTime());
 		String path = "."; 
@@ -167,8 +175,12 @@ public class ServiciosImpl
 	
 	
 	
-	public void mostrarInformacion(String nombre, String clave)
+	public Boolean mostrarInformacion(String nombre, String clave)
 			throws java.rmi.RemoteException{
+		
+		if (!(a.autenticarUsuario(nombre, clave))) { 
+			return false;
+		}
 		
 		String timeStamp = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Calendar.getInstance().getTime());
 		
@@ -179,11 +191,16 @@ public class ServiciosImpl
 		logs[indice] = "";
 		logs[indice] = "(" + timeStamp + ") " + nombre + " solicito los comandos disponibles";
 		indice++;
+		return true;
 		
 	}
 	
-	public void mostrarArchivosLocales(String nombre, String clave)
+	public Boolean mostrarArchivosLocales(String nombre, String clave)
 			throws java.rmi.RemoteException{
+		
+		if (!(a.autenticarUsuario(nombre, clave))) { 
+			return false;
+		}
 		
 		String timeStamp = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Calendar.getInstance().getTime());
 		
@@ -194,7 +211,7 @@ public class ServiciosImpl
 		logs[indice] = "";
 		logs[indice] =  "(" + timeStamp + ") " + nombre + " solicito listar sus archivos locales";
 		indice++;
-		
+		return true;
 	}
 	
 	
