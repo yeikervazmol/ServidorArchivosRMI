@@ -17,7 +17,7 @@ public interface Servicios
 	public byte[] bajarArchivo(String nombre, String clave, String nombreArchivo)
 		throws java.rmi.RemoteException;
 	
-	public String borrarArchivo(String nombre, String clave)
+	public String borrarArchivo(String nombre, String clave, String nombreArchivo)
 		throws java.rmi.RemoteException;
 	
 	public Boolean mostrarInformacion(String nombre, String clave)

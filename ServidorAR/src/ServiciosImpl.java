@@ -7,12 +7,43 @@ import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
+import java.util.List;
 
 
 public class ServiciosImpl 
 	extends	java.rmi.server.UnicastRemoteObject 
 	implements Servicios {
+	
+	private class ArchivoDueno {
+		
+		private String archivo;
+		private String dueno;
+		
+		private ArchivoDueno(){
+			this.archivo = "";
+			this.dueno = "";
+		}
+		
+		public String getArchivo() {
+			return archivo;
+		}
+
+		public void setArchivo(String archivo) {
+			this.archivo = archivo;
+		}
+
+		public String getDueno() {
+			return dueno;
+		}
+
+		public void setDueno(String dueno) {
+			this.dueno = dueno;
+		}
+		
+	} 
 	
 	/**
 	 * 
@@ -22,6 +53,7 @@ public class ServiciosImpl
 	public static String[] logs = new String[20];
 	private static int indice;
 	public static Autenticacion a;
+	public List<ArchivoDueno> listaDuenos = new ArrayList<ArchivoDueno>();
 	
 	// Implementations must have an explicit
 	//constructor in order to declare the
@@ -109,6 +141,8 @@ public class ServiciosImpl
 						|| files.equals("ServiciosImpl.class")
 						|| files.equals("Autenticacion.java")
 						|| files.equals("Autenticacion.class")
+						|| files.equals("ServiciosImpl$1.class")
+						|| files.equals("ServiciosImpl$ArchivoDueno.class")
 						)
 					){
 					
@@ -132,15 +166,24 @@ public class ServiciosImpl
 	public String subirArchivo(String nombre, String clave, String nombreArchivo, byte[] datosArchivo)
 	throws java.rmi.RemoteException {
 		
+		if (!(a.autenticarUsuario(nombre, clave))) { 
+			return "false";
+		}
+		
 		try {
-			
-	         File archivo = new File(nombreArchivo);
-	         BufferedOutputStream salida = new
+			ArchivoDueno nuevo = new ArchivoDueno();
+			nuevo.setArchivo(nombreArchivo);
+			nuevo.setDueno(nombre);
+			listaDuenos.add(nuevo);
+	        File archivo = new File(nombreArchivo);
+	        BufferedOutputStream salida = new
 	           BufferedOutputStream(new FileOutputStream(archivo.getName()));
 	         
-	         salida.write(datosArchivo,0,datosArchivo.length);
-	         salida.flush();
+	        salida.write(datosArchivo,0,datosArchivo.length);
+	        salida.flush();
 	         salida.close();
+	         
+	         
 	         
 	    } catch(Exception e) {
 	         System.err.println("FileServer exception: "+ e.getMessage());
@@ -157,11 +200,15 @@ public class ServiciosImpl
 		logs[indice] = "(" + timeStamp + ") " + "Subida del archivo: bla.txt por: " + nombre;
 		indice++;
 	
-		return "Subiendo archivo al servidor.\n";
+		return nombreArchivo + " ha sido subido con exito.\n";
 	}
 	
 	public byte[] bajarArchivo(String nombre, String clave, String nombreArchivo)
 	throws java.rmi.RemoteException {
+		
+		if (!(a.autenticarUsuario(nombre, clave))) { 
+			return null;
+		}
 		
 		File archivo = new File(nombreArchivo);
 		byte buffer[] = new byte[(int)archivo.length()];
@@ -191,8 +238,28 @@ public class ServiciosImpl
 		
 	}
 			
-	public String borrarArchivo(String nombre, String clave)
+	public String borrarArchivo(String nombre, String clave, String nombreArchivo)
 	throws java.rmi.RemoteException {
+		
+		if (!(a.autenticarUsuario(nombre, clave))) { 
+			return "false";
+		}
+
+		Boolean permiso = false;
+		Iterator<ArchivoDueno> iteradorDuenos = listaDuenos.iterator();
+		while(iteradorDuenos.hasNext()){
+			 ArchivoDueno elemento = (ArchivoDueno)iteradorDuenos.next();
+			 System.out.println("Duenos: " + elemento.dueno + " " + elemento.archivo);
+			 if (elemento.getArchivo().equals(nombreArchivo)){
+				 if (elemento.getDueno().endsWith(nombre)){
+					 permiso = true;
+					 listaDuenos.remove(elemento);
+					 break;
+				 }
+			 }
+	         
+	    }
+		System.out.println("\n");
 		
 		String timeStamp = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Calendar.getInstance().getTime());
 		
@@ -201,10 +268,27 @@ public class ServiciosImpl
 		}
 		
 		logs[indice] = "";
-		logs[indice] = "(" + timeStamp + ") " + "Borrado el archivo: bla.txt por: " + nombre;
+		logs[indice] = "(" + timeStamp + ") " + "Borrado el archivo: " + nombreArchivo + " por: " + nombre;
 		indice++;
-		
-		return "Borrando archivo en el servidor.\n";
+		if (permiso){
+		   	try{
+		 
+		   		File archivo = new File("./" + nombreArchivo);
+		 
+		   		if(archivo.delete()){
+		   			return nombreArchivo + " ha sido eliminado.\n";
+	    		} else {
+	    			return nombreArchivo + "no se pudo eliminar.\n";
+		    	}
+		 
+		    }catch(Exception e){
+		   		e.printStackTrace();
+		   	}
+		}
+	   	
+	   	return "Usted no es el dueno del archivo " + nombreArchivo + "."
+	   			+ "\nPor lo tanto no lo puede eliminar del servidor.\n";
+	   	
 	}
 	
 	

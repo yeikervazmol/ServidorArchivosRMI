@@ -242,41 +242,60 @@ public class c_rmifs {
 				System.out.println ( "Hasta luego.\n" );
 				System.exit(0);				
 			} else { 
-				String[] comandosCompuestos = comando.split(" ");
+				String[] comandosCompuestos = comando.split(" ", 2);
 				
 				if (comandosCompuestos.length == 2) {
+					
 					String nombreArchivo = comandosCompuestos[1]; 
+					
 					if (comandosCompuestos[0].equals("sub")) { 
 						
-						File archivo = new File(nombreArchivo);
-						byte buffer[] = new byte[(int)archivo.length()];
 						
-						try {
-							BufferedInputStream entrada = new 
-									BufferedInputStream(new FileInputStream(nombreArchivo));	
 							
-					         entrada.read(buffer,0,buffer.length);
-					         System.out.println(s.subirArchivo(nombre, clave, nombreArchivo, buffer));
-					         entrada.close();
-					      } catch(Exception e){
-					         System.out.println("FileImpl: "+e.getMessage());
-					         e.printStackTrace();
-					      }
+							File archivo = new File(nombreArchivo);
+							byte buffer[] = new byte[(int)archivo.length()];
+							
+							try {
+								BufferedInputStream entrada = new 
+										BufferedInputStream(new FileInputStream(nombreArchivo));	
+								
+						         entrada.read(buffer,0,buffer.length);
+						         String subidaArchivo = s.subirArchivo(nombre, clave, nombreArchivo, buffer);
+						         entrada.close();
+						         
+						         if ((subidaArchivo.equals("false"))) { 				
+						        	 	System.out.println("Error de autenticacion.");
+										System.exit(0);
+								} else {
+									System.out.println(subidaArchivo);
+								}	
+									
+						      } catch(Exception e){
+						         System.out.println("FileImpl: "+e.getMessage());
+						         e.printStackTrace();
+						      }
+							
 						
 						return;
+						
 					} else if  (comandosCompuestos[0].equals("baj")){
 						
 						try {
 							
 					         byte[] datosArchivo = s.bajarArchivo(nombre, clave, nombreArchivo);
 					         
-					         File archivo = new File(nombreArchivo);
-					         BufferedOutputStream salida = new
-					           BufferedOutputStream(new FileOutputStream(archivo.getName()));
-					         
-					         salida.write(datosArchivo,0,datosArchivo.length);
-					         salida.flush();
-					         salida.close();
+					         if (datosArchivo != null) {
+						         File archivo = new File(nombreArchivo);
+						         BufferedOutputStream salida = new
+						           BufferedOutputStream(new FileOutputStream(archivo.getName()));
+						         
+						         salida.write(datosArchivo,0,datosArchivo.length);
+						         salida.flush();
+						         salida.close();
+					         } else {
+					        	 System.out.println("Error de autenticacion.");
+					        	 System.exit(0);
+					         }
 					         
 					    } catch(Exception e) {
 					         System.err.println("FileServer exception: "+ e.getMessage());
@@ -284,8 +303,17 @@ public class c_rmifs {
 					    }
 						System.out.println(nombreArchivo + " descargado con exito.");
 						return;
+						
 					} else if  (comandosCompuestos[0].equals("bor")){
-						System.out.println ( s.borrarArchivo(nombre, clave));
+						
+						String borradoArchivo = s.borrarArchivo(nombre, clave, nombreArchivo);
+						if (!(borradoArchivo.equals("false"))) {
+							System.out.println (borradoArchivo);
+						} else {
+							System.out.println("Error de autenticacion.");
+							System.exit(0);
+						}
+						
 						return;
 					}
 				}
