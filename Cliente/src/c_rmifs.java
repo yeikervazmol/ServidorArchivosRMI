@@ -36,7 +36,7 @@ public class c_rmifs {
 				System.out.println ("Sintaxis de invocacion incorrecta.");
 				System.out.println("\nSintaxis de invocacion: ");
 				System.out.println ("java c_rmifs [-f usuarios] -m servidor -p puerto [-c comandos]"); 
-				return;
+				System.exit(0);
 			} else {
 				for(int j = 0; j < argv; j = j + 2){
 
@@ -64,7 +64,7 @@ public class c_rmifs {
 						System.out.println ("Sintaxis de invocacion incorrecta.");
 						System.out.println("\nSintaxis de invocacion: ");
 						System.out.println ("java c_rmifs [-f usuarios] -m servidor -p puerto [-c comandos]");
-						return;
+						System.exit(0);
 					}
 				}
 			}
@@ -73,7 +73,7 @@ public class c_rmifs {
 				System.out.println ("Sintaxis de invocacion incorrecta.");
 				System.out.println("\nSintaxis de invocacion: ");
 				System.out.println ("java c_rmifs [-f usuarios] -m servidor -p puerto [-c comandos]");
-				return;
+				System.exit(0);
 			} 
 			
 			s = (Servicios)
@@ -90,7 +90,12 @@ public class c_rmifs {
 				clave = new String(System.console().readPassword("\nIntroduzca su clave: "));
 			}
 
-			System.out.println (s.iniciarSesion(nombre,clave));
+			if (s.iniciarSesion(nombre,clave)){
+				System.out.println("Bienvenido " + nombre + ". Usted esta conectado al servidor.\n");
+			} else {
+				System.out.println("Error de autenticacion.");
+				System.exit(0);
+			}
 			
 			if (hayArchivoCom){
 				while( ((comando = comandos.readLine()) != null) && !salir ){
@@ -177,6 +182,7 @@ public class c_rmifs {
 	public static void ejecutarComando(String comando){
 		try{
 			if (comando.equals("rls")) {
+				System.out.println ( "\nArchivos en servidor remoto:\n" );
 				System.out.println ( s.listarArchivosEnServidor(nombre, clave));
 			} else if (comando.equals("lls")) {
 				s.mostrarArchivosLocales(nombre, clave);

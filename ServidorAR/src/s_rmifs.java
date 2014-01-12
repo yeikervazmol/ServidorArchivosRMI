@@ -1,6 +1,3 @@
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -10,16 +7,19 @@ public class s_rmifs {
 	public static String host = "";
 	public static String puertolocal = "";
 	public static String puerto = "";
-	public static Servicios c;
 	public static String comando;
+	// Interfaces para la conexion 
+	public static Servicios c;
+
 	
 	public s_rmifs() {
 		try {
-			c = new ServiciosImpl();
+			c = new ServiciosImpl(host, puerto);
 			
 			LocateRegistry.createRegistry(Integer.parseInt(puertolocal));
 			
 			Naming.rebind("rmi://localhost:" + puertolocal + "/Servicios", c);
+			
 		}
 		catch (Exception e) {
 			System.out.println ("Trouble: " + e);
@@ -56,7 +56,7 @@ public class s_rmifs {
 					System.out.println ("Sintaxis de invocacion incorrecta.");
 					System.out.println("\nSintaxis de invocacion: ");
 					System.out.println ("java s_rmifs -l puertolocal -h host -r puerto");
-					return;
+					System.exit(0);
 				}
 			}
 		}
