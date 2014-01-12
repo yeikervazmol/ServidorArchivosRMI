@@ -1,4 +1,8 @@
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
@@ -125,8 +129,23 @@ public class ServiciosImpl
 		return respuesta;
 	}
 	
-	public String subirArchivo(String nombre, String clave)
+	public String subirArchivo(String nombre, String clave, String nombreArchivo, byte[] datosArchivo)
 	throws java.rmi.RemoteException {
+		
+		try {
+			
+	         File archivo = new File(nombreArchivo);
+	         BufferedOutputStream salida = new
+	           BufferedOutputStream(new FileOutputStream(archivo.getName()));
+	         
+	         salida.write(datosArchivo,0,datosArchivo.length);
+	         salida.flush();
+	         salida.close();
+	         
+	    } catch(Exception e) {
+	         System.err.println("FileServer exception: "+ e.getMessage());
+	         e.printStackTrace();
+	    }
 		
 		String timeStamp = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Calendar.getInstance().getTime());
 		
@@ -141,9 +160,23 @@ public class ServiciosImpl
 		return "Subiendo archivo al servidor.\n";
 	}
 	
-	public String bajarArchivo(String nombre, String clave)
+	public byte[] bajarArchivo(String nombre, String clave, String nombreArchivo)
 	throws java.rmi.RemoteException {
 		
+		File archivo = new File(nombreArchivo);
+		byte buffer[] = new byte[(int)archivo.length()];
+		
+		try {
+			BufferedInputStream entrada = new 
+					BufferedInputStream(new FileInputStream(nombreArchivo));	         
+	         entrada.read(buffer,0,buffer.length);
+	         entrada.close();
+	      } catch(Exception e){
+	         System.out.println("FileImpl: "+e.getMessage());
+	         e.printStackTrace();
+	         return(null);
+	      }
+		 
 		String timeStamp = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Calendar.getInstance().getTime());
 		
 		if ( indice >= 20) {
@@ -153,8 +186,9 @@ public class ServiciosImpl
 		logs[indice] = "";
 		logs[indice] = "(" + timeStamp + ") " + "Descarga del archivo: bla.txt por: " + nombre;
 		indice++;
+		return(buffer);
 		
-		return "Bajando archivo desde el servidor.\n";
+		
 	}
 			
 	public String borrarArchivo(String nombre, String clave)

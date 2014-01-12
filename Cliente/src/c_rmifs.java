@@ -82,6 +82,7 @@ public class c_rmifs {
 				datosUsuario = (usuarios.readLine()).split(":");
 				nombre = datosUsuario[0];
 				clave = datosUsuario[1];
+				usuarios.close();
 			}else{
 				System.out.print ("Introduzca su nombre de usuario: ");
 				nombre = System.console().readLine();
@@ -107,6 +108,8 @@ public class c_rmifs {
 				comando = System.console().readLine();
 				ejecutarComando(comando);
 			}
+			
+			
 		
 		} 
 		
@@ -202,12 +205,6 @@ public class c_rmifs {
 					System.exit(0);
 				}			
 				
-			} else if (comando.equals("sub archivo")) {
-				System.out.println ( s.subirArchivo(nombre, clave));
-			} else if  (comando.equals("baj archivo")){
-				System.out.println ( s.bajarArchivo(nombre, clave));
-			} else if  (comando.equals("bor archivo")){
-				System.out.println ( s.borrarArchivo(nombre, clave));
 			} else if  (comando.equals("info")){
 				
 				if (s.mostrarInformacion(nombre, clave)){
@@ -245,7 +242,56 @@ public class c_rmifs {
 				System.out.println ( "Hasta luego.\n" );
 				System.exit(0);				
 			} else { 
+				String[] comandosCompuestos = comando.split(" ");
+				
+				if (comandosCompuestos.length == 2) {
+					String nombreArchivo = comandosCompuestos[1]; 
+					if (comandosCompuestos[0].equals("sub")) { 
+						
+						File archivo = new File(nombreArchivo);
+						byte buffer[] = new byte[(int)archivo.length()];
+						
+						try {
+							BufferedInputStream entrada = new 
+									BufferedInputStream(new FileInputStream(nombreArchivo));	
+							
+					         entrada.read(buffer,0,buffer.length);
+					         System.out.println(s.subirArchivo(nombre, clave, nombreArchivo, buffer));
+					         entrada.close();
+					      } catch(Exception e){
+					         System.out.println("FileImpl: "+e.getMessage());
+					         e.printStackTrace();
+					      }
+						
+						return;
+					} else if  (comandosCompuestos[0].equals("baj")){
+						
+						try {
+							
+					         byte[] datosArchivo = s.bajarArchivo(nombre, clave, nombreArchivo);
+					         
+					         File archivo = new File(nombreArchivo);
+					         BufferedOutputStream salida = new
+					           BufferedOutputStream(new FileOutputStream(archivo.getName()));
+					         
+					         salida.write(datosArchivo,0,datosArchivo.length);
+					         salida.flush();
+					         salida.close();
+					         
+					    } catch(Exception e) {
+					         System.err.println("FileServer exception: "+ e.getMessage());
+					         e.printStackTrace();
+					    }
+						System.out.println(nombreArchivo + " descargado con exito.");
+						return;
+					} else if  (comandosCompuestos[0].equals("bor")){
+						System.out.println ( s.borrarArchivo(nombre, clave));
+						return;
+					}
+				}
+				
 				System.out.println ( "Opcion invalida. Intente de nuevo.\n" );
+				
 				System.out.println 
 				( 	"Comandos disponibles:\n" +
 					"rls\t\tMuestra la lista de archivos disponibles en servidor " +
@@ -265,6 +311,7 @@ public class c_rmifs {
 						"usar con\n\t\tuna breve descripción de cada uno de ellos.\n" +
 					"sal\t\tTermina la ejecución del programa cliente.\n" +
 					"\n" );
+				
 			}
 		} catch (RemoteException re) {
 			System.out.println ();

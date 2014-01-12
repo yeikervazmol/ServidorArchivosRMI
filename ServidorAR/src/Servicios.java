@@ -11,10 +11,10 @@ public interface Servicios
 	public String listarArchivosEnServidor(String nombre, String clave)
 	throws java.rmi.RemoteException;
 	
-	public String subirArchivo(String nombre, String clave)
+	public String subirArchivo(String nombre, String clave, String nombreArchivo, byte[] bytesArchivo)
 		throws java.rmi.RemoteException;
 	
-	public String bajarArchivo(String nombre, String clave)
+	public byte[] bajarArchivo(String nombre, String clave, String nombreArchivo)
 		throws java.rmi.RemoteException;
 	
 	public String borrarArchivo(String nombre, String clave)
