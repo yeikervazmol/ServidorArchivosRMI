@@ -90,7 +90,7 @@ public class c_rmifs {
 				clave = new String(System.console().readPassword("\nIntroduzca su clave: "));
 			}
 
-			if (s.iniciarSesion(nombre,clave)){
+			if (s.iniciarSesion(nombre,clave, 0)){
 				System.out.println("Bienvenido " + nombre + ". Usted esta conectado al servidor.\n");
 			} else {
 				System.out.println("Error de autenticacion.");
@@ -270,10 +270,11 @@ public class c_rmifs {
 									System.out.println(subidaArchivo);
 								}	
 									
-						      } catch(Exception e){
-						         System.out.println("FileImpl: "+e.getMessage());
-						         e.printStackTrace();
-						      }
+						      } catch(FileNotFoundException e){
+						    	  System.out.println("El archivo " +nombreArchivo + " no se encuentra en el directorio actual.\n");
+						      } catch (IOException e) {
+						    	  System.out.println("Problemas procesando el archivo " + nombreArchivo + ".\n");
+						      } 
 							
 						
 						return;
@@ -281,8 +282,7 @@ public class c_rmifs {
 					} else if  (comandosCompuestos[0].equals("baj")){
 						
 						try {
-							
-					         byte[] datosArchivo = s.bajarArchivo(nombre, clave, nombreArchivo);
+							 byte[] datosArchivo = s.bajarArchivo(nombre, clave, nombreArchivo);
 					         
 					         if (datosArchivo != null) {
 						         File archivo = new File(nombreArchivo);
@@ -293,15 +293,19 @@ public class c_rmifs {
 						         salida.flush();
 						         salida.close();
 					         } else {
-					        	 System.out.println("Error de autenticacion.");
-					        	 System.exit(0);
+					        	 if (!s.iniciarSesion(nombre, clave, 1)) { 
+					        		 System.out.println("Error de autenticacion.");
+					        		 System.exit(0);
+					        	 } else {
+					        		 System.out.println("El archivo "+ nombreArchivo + " puede que no exista en el servidor," +
+					        		 		"\no hubo problemas en el servidor procesando el archivo.\n");
+					        	 }
 					         }
 					         
 					    } catch(Exception e) {
 					         System.err.println("FileServer exception: "+ e.getMessage());
 					         e.printStackTrace();
 					    }
-						System.out.println(nombreArchivo + " descargado con exito.");
 						return;
 						
 					} else if  (comandosCompuestos[0].equals("bor")){

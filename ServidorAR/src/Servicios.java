@@ -2,7 +2,7 @@
 public interface Servicios
 	extends java.rmi.Remote {
 	
-	public Boolean iniciarSesion(String nombre, String clave)
+	public Boolean iniciarSesion(String nombre, String clave, int i)
 			throws java.rmi.RemoteException;
 	
 	public Boolean cerrarSesion(String nombre, String clave)

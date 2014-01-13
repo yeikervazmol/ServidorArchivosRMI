@@ -2,7 +2,9 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
@@ -75,22 +77,22 @@ public class ServiciosImpl
 	}
 
 	
-	public Boolean iniciarSesion(String nombre, String clave)
+	public Boolean iniciarSesion(String nombre, String clave, int i)
 	throws java.rmi.RemoteException {
 		
 		String timeStamp = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Calendar.getInstance().getTime());
 		if (!(a.autenticarUsuario(nombre, clave))) { 
 			return false;
 		}
+		if (i == 0) {
+			if ( indice >= 20) {
+				indice = 0;
+			}
 		
-		if ( indice >= 20) {
-			indice = 0;
+			logs[indice] = "";
+			logs[indice] = "(" + timeStamp + ") " + "Inicio de sesion por: " + nombre;
+			indice++;
 		}
-	
-		logs[indice] = "";
-		logs[indice] = "(" + timeStamp + ") " + "Inicio de sesion por: " + nombre;
-		indice++;
-		
 		return true;
 	}
 	
@@ -209,37 +211,41 @@ public class ServiciosImpl
 		if (!(a.autenticarUsuario(nombre, clave))) { 
 			return null;
 		}
-		
-		File archivo = new File(nombreArchivo);
-		byte buffer[] = new byte[(int)archivo.length()];
-		
 		try {
+			
+			File archivo = new File(nombreArchivo);
+			byte buffer[] = new byte[(int)archivo.length()];
+		
 			BufferedInputStream entrada = new 
 					BufferedInputStream(new FileInputStream(nombreArchivo));	         
-	         entrada.read(buffer,0,buffer.length);
-	         entrada.close();
-	      } catch(Exception e){
-	         System.out.println("FileImpl: "+e.getMessage());
-	         e.printStackTrace();
-	         return(null);
-	      }
-		 
-		String timeStamp = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Calendar.getInstance().getTime());
-		
-		if ( indice >= 20) {
-			indice = 0;
-		}
-		
-		logs[indice] = "";
-		logs[indice] = "(" + timeStamp + ") " + "Descarga del archivo: bla.txt por: " + nombre;
-		indice++;
-		return(buffer);
+	    	
+				entrada.read(buffer,0,buffer.length);
+				entrada.close();
+			
+	         
+	 		String timeStamp = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Calendar.getInstance().getTime());
+	 		
+	 		if ( indice >= 20) {
+	 			indice = 0;
+	 		}
+	 		
+	 		logs[indice] = "";
+	 		logs[indice] = "(" + timeStamp + ") " + "Descarga del archivo: " + nombreArchivo + "por: " + nombre;
+	 		indice++;
+	 					
+			return(buffer);
+	         
+	      } catch(FileNotFoundException e){
+	    	  	return null;
+	      } catch (IOException e) {
+	    	  	return null;
+		} 
 		
 		
 	}
 			
 	public String borrarArchivo(String nombre, String clave, String nombreArchivo)
-	throws java.rmi.RemoteException {
+	throws java.rmi.RemoteException{
 		
 		if (!(a.autenticarUsuario(nombre, clave))) { 
 			return "false";
@@ -271,23 +277,18 @@ public class ServiciosImpl
 		logs[indice] = "(" + timeStamp + ") " + "Borrado el archivo: " + nombreArchivo + " por: " + nombre;
 		indice++;
 		if (permiso){
-		   	try{
-		 
-		   		File archivo = new File("./" + nombreArchivo);
-		 
-		   		if(archivo.delete()){
-		   			return nombreArchivo + " ha sido eliminado.\n";
-	    		} else {
-	    			return nombreArchivo + "no se pudo eliminar.\n";
-		    	}
-		 
-		    }catch(Exception e){
-		   		e.printStackTrace();
-		   	}
+		   	File archivo = new File("./" + nombreArchivo);
+ 
+			if(archivo.delete()){
+				return nombreArchivo + " ha sido eliminado.\n";
+			} else {
+				return nombreArchivo + "no se pudo eliminar.\n";
+			}
 		}
 	   	
-	   	return "Usted no es el dueno del archivo " + nombreArchivo + "."
-	   			+ "\nPor lo tanto no lo puede eliminar del servidor.\n";
+	   	return "Usted no es el dueno del archivo " + nombreArchivo + ","
+	   			+ "\n o puede que dicho archivo no exista."
+	   			+ "\nPor lo tanto, no es posible eliminarlo en el servidor.\n";
 	   	
 	}
 	
