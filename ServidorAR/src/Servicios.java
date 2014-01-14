@@ -8,7 +8,7 @@ public interface Servicios
 	public Boolean cerrarSesion(String nombre, String clave)
 			throws java.rmi.RemoteException;
 	
-	public String listarArchivosEnServidor(String nombre, String clave)
+	public String listarArchivosEnServidor(String nombre, String clave, String nombreArchivo)
 	throws java.rmi.RemoteException;
 	
 	public String subirArchivo(String nombre, String clave, String nombreArchivo, byte[] bytesArchivo)

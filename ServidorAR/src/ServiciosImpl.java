@@ -116,14 +116,13 @@ public class ServiciosImpl
 		return true;
 	}
 	
-	public String listarArchivosEnServidor(String nombre, String clave)
+	public String listarArchivosEnServidor(String nombre, String clave, String nombreArchivo)
 	throws java.rmi.RemoteException {
 		
 		if (!(a.autenticarUsuario(nombre, clave))) { 
 			return "false";
 		}
 		
-		String timeStamp = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Calendar.getInstance().getTime());
 		String path = "."; 
 		String respuesta = "";
 		
@@ -147,22 +146,32 @@ public class ServiciosImpl
 						|| files.equals("ServiciosImpl$ArchivoDueno.class")
 						)
 					){
-					
-					respuesta += "\t" + files + "\n";
+					if (nombreArchivo == null) {
+						respuesta += "\t" + files + "\n";
+					} else {
+						if (files.equals(nombreArchivo)) {
+							return "true";
+						} 
+					}
 
 				}
 			}
 		}
 		
-		if ( indice >= 20) {
-			indice = 0;
+		if (nombreArchivo == null) {
+			if ( indice >= 20) {
+				indice = 0;
+			}
+			String timeStamp = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Calendar.getInstance().getTime());
+			logs[indice] = "";
+			logs[indice] = "(" + timeStamp + ") " + "Listado de archivos por: " + nombre;
+			indice++;
+			
+			return respuesta;
+		} else {
+			return "no";
 		}
 		
-		logs[indice] = "";
-		logs[indice] = "(" + timeStamp + ") " + "Listado de archivos por: " + nombre;
-		indice++;
-
-		return respuesta;
 	}
 	
 	public String subirArchivo(String nombre, String clave, String nombreArchivo, byte[] datosArchivo)
@@ -199,7 +208,7 @@ public class ServiciosImpl
 		}
 		
 		logs[indice] = "";
-		logs[indice] = "(" + timeStamp + ") " + "Subida del archivo: bla.txt por: " + nombre;
+		logs[indice] = "(" + timeStamp + ") " + "Subida del archivo: " + nombreArchivo + " por: " + nombre;
 		indice++;
 	
 		return nombreArchivo + " ha sido subido con exito.\n";

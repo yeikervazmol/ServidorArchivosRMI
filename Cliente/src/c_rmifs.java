@@ -186,7 +186,7 @@ public class c_rmifs {
 		try{
 			if (comando.equals("rls")) {
 				
-				String listaArchivos = s.listarArchivosEnServidor(nombre, clave);
+				String listaArchivos = s.listarArchivosEnServidor(nombre, clave, null);
 				if (!(listaArchivos.equals("false"))) {
 					System.out.println ( "\nArchivos en servidor remoto:\n" );
 					System.out.println (listaArchivos);
@@ -250,7 +250,14 @@ public class c_rmifs {
 					
 					if (comandosCompuestos[0].equals("sub")) { 
 						
-						
+						if (!s.listarArchivosEnServidor(nombre, clave, nombreArchivo).equals("no")) {
+							System.out.println("El archivo " + nombreArchivo + " ya existe en el servidor." +
+									"\n¿Desea sobreescribirlo?(si/no)");
+							if (!System.console().readLine().equals("si")) {
+								System.out.println("No se ha subido el archivo " + nombreArchivo + ".");
+								return;
+							}
+						} 
 							
 							File archivo = new File(nombreArchivo);
 							byte buffer[] = new byte[(int)archivo.length()];
@@ -276,7 +283,6 @@ public class c_rmifs {
 						    	  System.out.println("Problemas procesando el archivo " + nombreArchivo + ".\n");
 						      } 
 							
-						
 						return;
 						
 					} else if  (comandosCompuestos[0].equals("baj")){
