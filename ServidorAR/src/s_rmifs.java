@@ -22,7 +22,8 @@ public class s_rmifs {
 			
 		}
 		catch (Exception e) {
-			System.out.println ("Trouble: " + e);
+			System.out.println ("Fallas conectandose al servidor de autenticacion.");
+			System.exit(0);
 		}
 	}
 	

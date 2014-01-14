@@ -133,9 +133,8 @@ public class c_rmifs {
 		} 
 		
 		catch (IOException e) {
-			System.out.println ();
-			System.out.println ("IOException");
-			System.out.println (e);
+			System.out.println ("Fallas conectando con el servidor.");
+			System.exit(0);
 		}
 	}
 	

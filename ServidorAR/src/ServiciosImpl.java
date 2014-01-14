@@ -79,28 +79,40 @@ public class ServiciosImpl
 	
 	public Boolean iniciarSesion(String nombre, String clave, int i)
 	throws java.rmi.RemoteException {
-		
-		String timeStamp = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Calendar.getInstance().getTime());
-		if (!(a.autenticarUsuario(nombre, clave))) { 
-			return false;
-		}
-		if (i == 0) {
-			if ( indice >= 20) {
-				indice = 0;
+		try {
+			
+			String timeStamp = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Calendar.getInstance().getTime());
+			if (!(a.autenticarUsuario(nombre, clave))) { 
+				return false;
 			}
-		
-			logs[indice] = "";
-			logs[indice] = "(" + timeStamp + ") " + "Inicio de sesion por: " + nombre;
-			indice++;
+			if (i == 0) {
+				if ( indice >= 20) {
+					indice = 0;
+				}
+			
+				logs[indice] = "";
+				logs[indice] = "(" + timeStamp + ") " + "Inicio de sesion por: " + nombre;
+				indice++;
+			}
+			
+
+		} catch (Exception e){
+			System.out.println("Fallos conectandose al servidor de autenticacion.");
+			System.exit(0);
 		}
+		
 		return true;
 	}
 	
 	public Boolean cerrarSesion(String nombre, String clave)
 	throws java.rmi.RemoteException {
-		
-		if (!(a.autenticarUsuario(nombre, clave))) { 
-			return false;
+		try {
+			if (!(a.autenticarUsuario(nombre, clave))) { 
+				return false;
+			}
+		} catch (Exception e){
+			System.out.println("Fallos conectandose al servidor de autenticacion.");
+			System.exit(0);
 		}
 		
 		String timeStamp = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Calendar.getInstance().getTime());
@@ -112,15 +124,19 @@ public class ServiciosImpl
 		logs[indice] = "";
 		logs[indice] = "(" + timeStamp + ") " + "Cierre de sesion por: " + nombre;
 		indice++;
-		
+	
 		return true;
 	}
 	
 	public String listarArchivosEnServidor(String nombre, String clave, String nombreArchivo)
 	throws java.rmi.RemoteException {
-		
-		if (!(a.autenticarUsuario(nombre, clave))) { 
-			return "false";
+		try {
+			if (!(a.autenticarUsuario(nombre, clave))) { 
+				return "false";
+			}
+		} catch (Exception e){
+			System.out.println("Fallos conectandose al servidor de autenticacion.");
+			System.exit(0);
 		}
 		
 		String path = "."; 
@@ -177,8 +193,13 @@ public class ServiciosImpl
 	public String subirArchivo(String nombre, String clave, String nombreArchivo, byte[] datosArchivo)
 	throws java.rmi.RemoteException {
 		
-		if (!(a.autenticarUsuario(nombre, clave))) { 
-			return "false";
+		try {
+			if (!(a.autenticarUsuario(nombre, clave))) { 
+				return "false";
+			}
+		} catch (Exception e){
+			System.out.println("Fallos conectandose al servidor de autenticacion.");
+			System.exit(0);
 		}
 		
 		try {
@@ -217,9 +238,15 @@ public class ServiciosImpl
 	public byte[] bajarArchivo(String nombre, String clave, String nombreArchivo)
 	throws java.rmi.RemoteException {
 		
-		if (!(a.autenticarUsuario(nombre, clave))) { 
-			return null;
+		try {
+			if (!(a.autenticarUsuario(nombre, clave))) { 
+				return null;
+			}
+		} catch (Exception e){
+			System.out.println("Fallos conectandose al servidor de autenticacion.");
+			System.exit(0);
 		}
+		
 		try {
 			
 			File archivo = new File(nombreArchivo);
@@ -256,9 +283,15 @@ public class ServiciosImpl
 	public String borrarArchivo(String nombre, String clave, String nombreArchivo)
 	throws java.rmi.RemoteException{
 		
-		if (!(a.autenticarUsuario(nombre, clave))) { 
-			return "false";
+		try {
+			if (!(a.autenticarUsuario(nombre, clave))) { 
+				return "false";
+			}
+		} catch (Exception e){
+			System.out.println("Fallos conectandose al servidor de autenticacion.");
+			System.exit(0);
 		}
+		
 
 		Boolean permiso = false;
 		Iterator<ArchivoDueno> iteradorDuenos = listaDuenos.iterator();
@@ -306,9 +339,15 @@ public class ServiciosImpl
 	public Boolean mostrarInformacion(String nombre, String clave)
 			throws java.rmi.RemoteException{
 		
-		if (!(a.autenticarUsuario(nombre, clave))) { 
-			return false;
+		try {
+			if (!(a.autenticarUsuario(nombre, clave))) { 
+				return false;
+			}
+		} catch (Exception e){
+			System.out.println("Fallos conectandose al servidor de autenticacion.");
+			System.exit(0);
 		}
+		
 		
 		String timeStamp = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Calendar.getInstance().getTime());
 		
@@ -326,9 +365,15 @@ public class ServiciosImpl
 	public Boolean mostrarArchivosLocales(String nombre, String clave)
 			throws java.rmi.RemoteException{
 		
-		if (!(a.autenticarUsuario(nombre, clave))) { 
-			return false;
+		try {
+			if (!(a.autenticarUsuario(nombre, clave))) { 
+				return false;
+			}
+		} catch (Exception e){
+			System.out.println("Fallos conectandose al servidor de autenticacion.");
+			System.exit(0);
 		}
+		
 		
 		String timeStamp = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Calendar.getInstance().getTime());
 		
