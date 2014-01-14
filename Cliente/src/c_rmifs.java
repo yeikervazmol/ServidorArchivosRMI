@@ -139,7 +139,7 @@ public class c_rmifs {
 		}
 	}
 	
-	public static void mostrarArchivosLocales(){
+	public static Boolean mostrarArchivosLocales(String nombreArchivo){
 		String path = "."; 
 		
 		String files;
@@ -150,35 +150,42 @@ public class c_rmifs {
  
 			if (	listOfFiles[i].isFile()){
 				files = listOfFiles[i].getName();
-				if	( !(files.equals("Servicios.java")
-						|| files.equals("Servicios.class")
-						|| files.equals("c_rmifs.java")
-						|| files.equals("c_rmifs.class")
-						)
-					){
-					
-					
-					if(hayArchivoUsu && hayArchivoCom ){
-						if(!(files.equals(archivoUsu) || files.equals(archivoCom)) ){
-							System.out.println("\t" + files);
-						}
+				if (nombreArchivo == null){ 
+					if	( !(files.equals("Servicios.java")
+							|| files.equals("Servicios.class")
+							|| files.equals("c_rmifs.java")
+							|| files.equals("c_rmifs.class")
+							)
+						){
 						
-					} else if(!hayArchivoUsu && hayArchivoCom ){
-						if(!files.equals(archivoCom) ){
-							System.out.println("\t" + files);
-						}
 						
-					} else if(hayArchivoUsu && !hayArchivoCom ){
-						if(!files.equals(archivoUsu)){
+						if(hayArchivoUsu && hayArchivoCom ){
+							if(!(files.equals(archivoUsu) || files.equals(archivoCom)) ){
+								System.out.println("\t" + files);
+							}
+							
+						} else if(!hayArchivoUsu && hayArchivoCom ){
+							if(!files.equals(archivoCom) ){
+								System.out.println("\t" + files);
+							}
+							
+						} else if(hayArchivoUsu && !hayArchivoCom ){
+							if(!files.equals(archivoUsu)){
+								System.out.println("\t" + files);
+							}
+						} else if(!hayArchivoUsu && !hayArchivoCom ){
 							System.out.println("\t" + files);
-						}
-					} else if(!hayArchivoUsu && !hayArchivoCom ){
-						System.out.println("\t" + files);
-					}				
-					
+						}				
+						
+					}
+				} else {
+					if (files.equals(nombreArchivo)){
+						return true;
+					}
 				}
 			}
 		}
+		return false;
 	}
 
 	
@@ -199,7 +206,7 @@ public class c_rmifs {
 				
 				if (s.mostrarArchivosLocales(nombre, clave)){
 					System.out.println ( "\nArchivos locales:\n" );
-					mostrarArchivosLocales();
+					mostrarArchivosLocales(null);
 				} else {
 					System.out.println("Error de autenticacion.");
 					System.exit(0);
@@ -288,6 +295,17 @@ public class c_rmifs {
 					} else if  (comandosCompuestos[0].equals("baj")){
 						
 						try {
+							
+							if (mostrarArchivosLocales(nombreArchivo)) { 
+								
+								System.out.println("El archivo " + nombreArchivo + " ya existe en el directorio actual." +
+										"\n¿Desea sobreescribirlo?(si/no)");
+								if (!System.console().readLine().equals("si")) {
+									System.out.println("No se ha bajado el archivo " + nombreArchivo + ".\n	");
+									return;
+								}	
+							}
+							
 							 byte[] datosArchivo = s.bajarArchivo(nombre, clave, nombreArchivo);
 					         
 					         if (datosArchivo != null) {
@@ -298,6 +316,7 @@ public class c_rmifs {
 						         salida.write(datosArchivo,0,datosArchivo.length);
 						         salida.flush();
 						         salida.close();
+						         System.out.println("Archivo " + nombreArchivo + " bajado con exito.\n");
 					         } else {
 					        	 if (!s.iniciarSesion(nombre, clave, 1)) { 
 					        		 System.out.println("Error de autenticacion.");
