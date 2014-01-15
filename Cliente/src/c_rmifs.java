@@ -42,7 +42,12 @@ public class c_rmifs {
 					if(args[j].equals("-f") && !opciones[0]){
 						hayArchivoUsu = true;
 						archivoUsu = args[j+1];
-						usuarios = new BufferedReader(new FileReader(new File(archivoUsu)));
+						try {
+							usuarios = new BufferedReader(new FileReader(new File(archivoUsu)));
+						} catch (FileNotFoundException e) {
+							System.out.println ("El archivo " + archivoUsu + " no se encuentra en el directorio actual.");
+							System.exit(0);
+						} 
 						opciones[0] = true;
 						
 					}else if(args[j].equals("-p") && !opciones[1]){
@@ -56,7 +61,12 @@ public class c_rmifs {
 					}else if(args[j].equals("-c") && !opciones[3]){						
 						hayArchivoCom = true;
 						archivoCom = args[j+1];
-						comandos = new BufferedReader(new FileReader(new File(archivoCom)));
+						try {
+							comandos = new BufferedReader(new FileReader(new File(archivoCom)));
+						}catch (FileNotFoundException e) {
+							System.out.println ("El archivo " + archivoCom + " no se encuentra en el directorio actual.");
+							System.exit(0);
+						} 
 						opciones[3] = true;
 						
 					} else {
@@ -126,11 +136,6 @@ public class c_rmifs {
 			System.out.println (nbe);
 		}
 		
-		catch (FileNotFoundException e) {
-			System.out.println ();
-			System.out.println ("FileNotFoundException");
-			System.out.println (e);
-		} 
 		
 		catch (IOException e) {
 			System.out.println ("Fallas conectando con el servidor.");
