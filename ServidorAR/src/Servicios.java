@@ -1,3 +1,13 @@
+/**
+* @author Karen Troiano		09-10855
+* @author Yeiker Vazquez	09-10882
+* @grupo  15
+*
+* Archivo: Servicios.java
+*
+* Descripcion: Interfaz para el programa principal del
+* servidor de de archivos.
+*/
 
 public interface Servicios
 	extends java.rmi.Remote {

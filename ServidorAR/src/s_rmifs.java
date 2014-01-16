@@ -1,3 +1,14 @@
+/**
+* @author Karen Troiano		09-10855
+* @author Yeiker Vazquez	09-10882
+* @grupo  15
+*
+* Archivo: s_rmifs.java
+*
+* Descripcion: Contiene el programa principal del
+* servidor de archivos.
+*/
+
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;

@@ -1,3 +1,14 @@
+/**
+* @author Karen Troiano		09-10855
+* @author Yeiker Vazquez	09-10882
+* @grupo  15
+*
+* Archivo: AutenticacionImpl.java
+*
+* Descripcion: Implementacion de la interfaz para el programa 
+* principal del servidor de autentificacion (Autenticacion.java).
+*/
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,9 +25,6 @@ public class AutenticacionImpl
         private static final long serialVersionUID = 1L;
         public static String archivoUsu = "";
         
-        // Implementations must have an explicit
-        //constructor in order to declare the
-        // RemoteException exception
         public AutenticacionImpl(String archivo)
         throws java.rmi.RemoteException {
                 super();

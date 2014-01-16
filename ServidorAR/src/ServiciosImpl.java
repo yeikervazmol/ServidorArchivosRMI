@@ -1,3 +1,14 @@
+/**
+* @author Karen Troiano		09-10855
+* @author Yeiker Vazquez	09-10882
+* @grupo  15
+*
+* Archivo: AutenticacionImpl.java
+*
+* Descripcion: Implementacion de la interfaz para el programa 
+* principal del servidor de archivos (Servicios.java).
+*/
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;

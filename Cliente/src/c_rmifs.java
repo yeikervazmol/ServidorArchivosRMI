@@ -1,3 +1,14 @@
+/**
+* @author Karen Troiano		09-10855
+* @author Yeiker Vazquez	09-10882
+* @grupo  15
+*
+* Archivo: c_rmifs.java
+*
+* Descripcion: Contiene el programa principal del
+* cliente del sistema.
+*/
+
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.io.*;

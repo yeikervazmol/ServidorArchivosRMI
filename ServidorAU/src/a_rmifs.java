@@ -1,3 +1,14 @@
+/**
+* @author Karen Troiano		09-10855
+* @author Yeiker Vazquez	09-10882
+* @grupo  15
+*
+* Archivo: a_rmifs.java
+*
+* Descripcion: Contiene el programa principal del
+* servidor de autentificacion.
+*/
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -48,7 +59,7 @@ public class a_rmifs {
                                 		BufferedReader prueba = new BufferedReader(new FileReader(new File(args[j+1])));
                                         archivoUsu = args[j+1];
                                         opciones[1] = true;
-                                	}catch (FileNotFoundException e){
+                                	} catch (FileNotFoundException e){
                                 		System.out.println ("El archivo " + args[j+1] + " no se encuentra en el directorio actual.");
             							System.exit(0);
                                 	}
