@@ -17,22 +17,49 @@ import java.rmi.NotBoundException;
 
 public class c_rmifs {
 	
+	/**
+	 * Variables globales.
+	 */
+	/**
+	 * Interfaz que permite la invocacion remota
+	 *   los metodos del servidor.
+	 **/
 	public static Servicios s;
+	/** 
+	 * Variables que almacenan informacion sobre
+	 * 	el cliente. 
+	 */
 	public static Boolean salir;
 	public static String nombre;
 	public static String clave;
+	/**
+	 * Variables que contienen informacion sobre
+	 *  los archivos del cliente. 
+	 */
 	public static Boolean hayArchivoCom = false;
 	public static Boolean hayArchivoUsu = false;
 	public static String archivoCom = "";
 	public static String archivoUsu = "";
+	/**
+	 * Fin de las variables globales.
+	 */
 	
 	public static void main(String[] args) {
 		try {
 			
+			/** 
+			 * Variables que verifica de que no se
+			 *  repita algun parametro en la invocacion
+			 *  del programa cliente.
+			 */
 			String servidor = "";
 			String puerto = "";
 			String [] datosUsuario;
-			// Verificacion de que no se repite algun parametro.
+			/** 
+			 * Variable que verifica de que no se
+			 *  repita algun parametro en la invocacion
+			 *  del programa cliente.
+			 */
 			Boolean[] opciones = { false, false, false, false };
 			
 			int argv = args.length;

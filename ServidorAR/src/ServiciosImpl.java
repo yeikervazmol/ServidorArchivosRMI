@@ -308,7 +308,6 @@ public class ServiciosImpl
 		Iterator<ArchivoDueno> iteradorDuenos = listaDuenos.iterator();
 		while(iteradorDuenos.hasNext()){
 			 ArchivoDueno elemento = (ArchivoDueno)iteradorDuenos.next();
-			 System.out.println("Duenos: " + elemento.dueno + " " + elemento.archivo);
 			 if (elemento.getArchivo().equals(nombreArchivo)){
 				 if (elemento.getDueno().endsWith(nombre)){
 					 permiso = true;
@@ -318,7 +317,6 @@ public class ServiciosImpl
 			 }
 	         
 	    }
-		System.out.println("\n");
 		
 		String timeStamp = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Calendar.getInstance().getTime());
 		
