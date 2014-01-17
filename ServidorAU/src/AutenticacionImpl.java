@@ -33,13 +33,13 @@ public class AutenticacionImpl
         
         /*
          * AutenticacionImpl:
+         * 	Constructor de la clase.
          * 	Se encarga de asignar a la variable el nombre del 
          * 	archivo.
          * 
          * @param 	Es el nombre del archivo que contiene los nombres
          * 			y claves de los usuarios con acceso al servidor.
          * @throws 	java.rmi.RemoteException.
-         * @return 	Objeto de AutenticacionImpl. 
          */
         public AutenticacionImpl(String archivo)
         throws java.rmi.RemoteException {
