@@ -27,6 +27,9 @@ public class s_rmifs {
 	 *   los metodos del servidor.
 	 **/
 	public static Servicios c;
+	/**
+	 * Fin de las variables globales.
+	 */
 
 	/**
 	 * s_rmisf:

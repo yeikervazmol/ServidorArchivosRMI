@@ -30,6 +30,11 @@ public class ServiciosImpl
 	extends	java.rmi.server.UnicastRemoteObject 
 	implements Servicios {
 	
+	/**
+	 * ArchivoDueno:
+	 * 	Clase anidada que se utiliza
+	 * 	para representar la tupa {archivo, dueno}
+	 */
 	private class ArchivoDueno {
 		
 		private String archivo;
@@ -59,7 +64,7 @@ public class ServiciosImpl
 	} 
 	
 	/**
-	 * 
+	 * Variables globales.
 	 */
 	private static final long serialVersionUID = 1L;
 	private static String claveServidor = "09108550910882"; 
@@ -67,10 +72,18 @@ public class ServiciosImpl
 	private static int indice;
 	public static Autenticacion a;
 	public List<ArchivoDueno> listaDuenos = new ArrayList<ArchivoDueno>();
+	/**
+	 * Fin de las variables globales.
+	 */
 	
-	// Implementations must have an explicit
-	//constructor in order to declare the
-	// RemoteException exception
+
+	/**
+	 * ServiciosImpl:
+	 * 	Constructor de la clase.
+	 * 	Se encarga de establecer el puerto del servicio
+	 *  mediante el cual se conectara al servidor.
+	 *   
+	 */
 	public ServiciosImpl(String host, String puerto)
 	throws java.rmi.RemoteException {
 		super();
@@ -79,15 +92,24 @@ public class ServiciosImpl
 			a = (Autenticacion)
 					Naming.lookup("rmi://" + host + ":" + puerto + "/Autenticacion");
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (NotBoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	
+	/** 
+	 * iniciarSesion:
+	 * 	Funcion encargada de autenticar el usuario 
+	 * 	y agregar al log este inicio de sesion.
+	 * 
+	 * @param 	Nombre del usuario a entrar.
+	 * @param	Clave del usuario a entrar.
+	 * @param	Opcion para identificar si se registrara en 
+	 * 			el log o no.
+	 * @return	Devuelve true si fue exitosa la conexion, false
+	 * 			en caso de error de autentificacion.
+	 */
 	public Boolean iniciarSesion(String nombre, String clave, int i)
 	throws java.rmi.RemoteException {
 		try {
@@ -107,7 +129,11 @@ public class ServiciosImpl
 			}
 			
 
-		} catch (Exception e){
+		} 
+		/**
+		 * Excepcion que contrala la falla de coneccion con el servidor. 
+		 */
+		catch (Exception e){
 			System.out.println("Fallos conectandose al servidor de autenticacion.");
 			System.exit(0);
 		}
@@ -115,13 +141,29 @@ public class ServiciosImpl
 		return true;
 	}
 	
+	
+	/** 
+	 * cerrarSesion:
+	 * 	Funcion encargada de autenticar el usuario 
+	 * 	y agregar al log este cierre de sesion.
+	 * 
+	 * @param 	Nombre del usuario a salir.
+	 * @param	Clave del usuario a salir.
+	 * @return	Devuelve true si fue exitosa la salida, false
+	 * 			en caso de error de autentificacion.
+	 */
+	
 	public Boolean cerrarSesion(String nombre, String clave)
 	throws java.rmi.RemoteException {
 		try {
 			if (!(a.autenticarUsuario(nombre, clave))) { 
 				return false;
 			}
-		} catch (Exception e){
+		} 
+		/**
+		 * Excepcion que contrala la falla de coneccion con el servidor. 
+		 */
+		catch (Exception e){
 			System.out.println("Fallos conectandose al servidor de autenticacion.");
 			System.exit(0);
 		}
@@ -139,6 +181,24 @@ public class ServiciosImpl
 		return true;
 	}
 	
+
+	/** 
+	 * listarArchivosEnServidor:
+	 * 	Funcion encargada de buscar si un archivo 
+	 * 	pertenece a la lista de archivos locales 
+	 * 	del servidor.
+	 * 
+	 * 	A su vez se encarga de mostrar 
+	 * 	la lista de archivos del servidor.
+	 * 
+	 * @param 	Nombre del usuario a autenticar.
+	 * @param	Clave del usuario a autenticar.
+	 * @param	Nombre del archivo a ser buscado.
+	 * @return	Devuelve la lista si fue exitosa la conexion, "false"
+	 * 			en caso de error de autentificacion y "no" en caso de
+	 * 			no haber encontrado el archivo en la lista de archivos
+	 * 			en el servidor.
+	 */
 	public String listarArchivosEnServidor(String nombre, String clave, String nombreArchivo)
 	throws java.rmi.RemoteException {
 		try {
@@ -161,6 +221,9 @@ public class ServiciosImpl
  
 			if (	listOfFiles[i].isFile()){
 				files = listOfFiles[i].getName();
+				/*
+				 * Se ignoran los archivos relacionados con el proyecto. 
+				 */
 				if	( !(files.equals("Servicios.java")
 						|| files.equals("Servicios.class")
 						|| files.equals("s_rmifs.java")
@@ -185,6 +248,10 @@ public class ServiciosImpl
 			}
 		}
 		
+		/* 
+		 * Si el archivo es nulo entonces se listan los
+		 *  archivos locales y se guarda en el log.
+		 */
 		if (nombreArchivo == null) {
 			if ( indice >= 20) {
 				indice = 0;
@@ -201,6 +268,19 @@ public class ServiciosImpl
 		
 	}
 	
+	/** 
+	 * subirArchivo:
+	 * 	Funcion encargada de subir un archivo 
+	 * 	al servidor.
+	 * 
+	 * @param 	Nombre del usuario a autenticar.
+	 * @param	Clave del usuario a autenticar.
+	 * @param	Nombre del archivo a ser agregado.
+	 * @param	Arreglo de bytes que contienen la informacion del archivo.
+	 * @return	Devuelve "false" en caso de error de autentificacion y 
+	 * 			un mensaje de exito en caso de exito y otro mensaje en 
+	 * 			caso de error.
+	 */
 	public String subirArchivo(String nombre, String clave, String nombreArchivo, byte[] datosArchivo)
 	throws java.rmi.RemoteException {
 		
@@ -224,10 +304,8 @@ public class ServiciosImpl
 	         
 	        salida.write(datosArchivo,0,datosArchivo.length);
 	        salida.flush();
-	         salida.close();
-	         
-	         
-	         
+	        salida.close();
+
 	    } catch(Exception e) {
 	         System.err.println("FileServer exception: "+ e.getMessage());
 	         e.printStackTrace();
@@ -245,7 +323,18 @@ public class ServiciosImpl
 	
 		return nombreArchivo + " ha sido subido con exito.\n";
 	}
-	
+
+	/** 
+	 * bajarArchivo:
+	 * 	Funcion encargada de bajar un archivo 
+	 * 	del servidor.
+	 * 
+	 * @param 	Nombre del usuario a autenticar.
+	 * @param	Clave del usuario a autenticar.
+	 * @param	Nombre del archivo a ser bajado.
+	 * @return	Devuelve null en caso de error y un arreglo de bytes con
+	 * 			el contenido del archivo.
+	 */
 	public byte[] bajarArchivo(String nombre, String clave, String nombreArchivo)
 	throws java.rmi.RemoteException {
 		
@@ -290,7 +379,19 @@ public class ServiciosImpl
 		
 		
 	}
-			
+	
+	/** 
+	 * borrarArchivo:
+	 * 	Funcion encargada de borrar un archivo 
+	 * 	del servidor.
+	 * 
+	 * @param 	Nombre del usuario a autenticar.
+	 * @param	Clave del usuario a autenticar.
+	 * @param	Nombre del archivo a ser borrado.
+	 * @return	Devuelve "false" en caso de error de autentificacion y 
+	 * 			un mensaje de exito en caso de exito y otro mensaje en 
+	 * 			caso de error.
+	 */
 	public String borrarArchivo(String nombre, String clave, String nombreArchivo)
 	throws java.rmi.RemoteException{
 		
@@ -344,7 +445,16 @@ public class ServiciosImpl
 	}
 	
 	
-	
+	/** 
+	 * mostrarInformacion:
+	 * 	Funcion encargada de guardar en el log que
+	 * 	el cliente utilizo el comando info.
+	 * 
+	 * @param 	Nombre del usuario a autenticar.
+	 * @param	Clave del usuario a autenticar.
+	 * @return	Devuelve false en caso de error de autenticacion y 
+	 * 			true en caso de exito.
+	 */
 	public Boolean mostrarInformacion(String nombre, String clave)
 			throws java.rmi.RemoteException{
 		
@@ -371,6 +481,17 @@ public class ServiciosImpl
 		
 	}
 	
+	
+	/** 
+	 * mostrarArchivosLocales:
+	 * 	Funcion encargada de guardar en el log que
+	 * 	el cliente utilizo el comando lls.
+	 * 
+	 * @param 	Nombre del usuario a autenticar.
+	 * @param	Clave del usuario a autenticar.
+	 * @return	Devuelve false en caso de error de autenticacion y 
+	 * 			true en caso de exito.
+	 */
 	public Boolean mostrarArchivosLocales(String nombre, String clave)
 			throws java.rmi.RemoteException{
 		
@@ -396,7 +517,11 @@ public class ServiciosImpl
 		return true;
 	}
 	
-	
+	/** 
+	 * inicializarLog:
+	 * 	Funcion encargada de inicializar la 
+	 *  estructura a ser utilizada en el log.
+	 */
 	public void inicializarLog()
 		throws java.rmi.RemoteException {
 			indice = 0;
@@ -405,7 +530,15 @@ public class ServiciosImpl
 			}
 	}
 
-	
+	/** 
+	 * entregarLog:
+	 * 	Funcion encargada de enviar el contenido del log.
+	 * 
+	 * @param 	Clave del servidor de archivos.
+	 * @return	Devuelve el log en caso de exito y "Acceso denegado"
+	 * 			en caso de no ser el servidor de archivos quien pide
+	 * 			el log.
+	 */
 	public String entregarLog(String clave)
 		throws java.rmi.RemoteException {
 			String Log;
