@@ -44,13 +44,18 @@ public class c_rmifs {
 	 * Fin de las variables globales.
 	 */
 	
+	/**
+	 * Funcion principal del c_rmifs.
+	 * 
+	 * @param Argumentos enviados.
+	 * 
+	 */
 	public static void main(String[] args) {
 		try {
 			
 			/** 
-			 * Variables que verifica de que no se
-			 *  repita algun parametro en la invocacion
-			 *  del programa cliente.
+			 * Variables que almacenan informacion sobre
+			 * 	el cliente una vez invocado el programa.
 			 */
 			String servidor = "";
 			String puerto = "";
@@ -179,8 +184,23 @@ public class c_rmifs {
 			System.out.println ("Fallas conectando con el servidor.");
 			System.exit(0);
 		}
-	}
+}
 	
+	/**
+	 * mostrarArchivosLocales:
+	 * 	Funcion encargada de buscar si un archivo 
+	 * 	pertenece a la lista de archivos locales 
+	 * 	del cliente.
+	 * 
+	 * A su vez se encarga de mostrar 
+	 * 	la lista de archivos locales al cliente. 
+	 * 
+	 * @param	Nombre del archivo a ser buscado.
+	 * @return	Devuelve true si el nombre del archivo
+	 * 			buscado se encuentra en el directorio
+	 * 			local, false en caso contrario.
+	 * 
+	 */		
 	public static Boolean mostrarArchivosLocales(String nombreArchivo){
 		String path = "."; 
 		
@@ -190,8 +210,15 @@ public class c_rmifs {
  
 		for (int i = 0; i < listOfFiles.length; i++){
  
+			/*
+			 * Se ignoran los archivos relacionados con el proyecto. 
+			 */
 			if (	listOfFiles[i].isFile()){
 				files = listOfFiles[i].getName();
+				/* 
+				 * Si el archivo es nulo entonces se lista al cliente
+				 * 	de archivos locales.
+				 */
 				if (nombreArchivo == null){ 
 					if	( !(files.equals("Servicios.java")
 							|| files.equals("Servicios.class")
@@ -221,6 +248,11 @@ public class c_rmifs {
 						
 					}
 				} else {
+					/* 
+					 * Si el archivo no es nulo entonces se 
+					 * busca si existe en la lista 	de archivos locales
+					 * del cliente.  
+					 */
 					if (files.equals(nombreArchivo)){
 						return true;
 					}
@@ -228,9 +260,18 @@ public class c_rmifs {
 			}
 		}
 		return false;
-	}
-
+}
 	
+	/**
+	 * ejecutarComando:
+	 * 	Funcion encargada de recibir un comando por archivo o terminal,
+	 * 	filtrar el mensaje para verificar su correctitud y envia al
+	 * 	servidor dicho mensaje para su debida respuesta. 
+	 * 
+	 * @param	El comando del cliente.
+	 * @trows	RemoteException.
+	 * 
+	 */
 	public static void ejecutarComando(String comando){
 		try{
 			if (comando.equals("rls")) {
@@ -276,6 +317,7 @@ public class c_rmifs {
 							"usar con\n\t\tuna breve descripción de cada uno de ellos.\n" +
 						"sal\t\tTermina la ejecución del programa cliente.\n" +
 						"\n" );
+					
 				} else {
 					System.out.println("Error de autenticacion.");
 					System.exit(0);
@@ -291,6 +333,14 @@ public class c_rmifs {
 				System.out.println ( "Hasta luego.\n" );
 				System.exit(0);				
 			} else { 
+				
+				/*
+				 * Else para los comandoscon mas de un 
+				 * 	parametro. En caso de no ser ninguna
+				 *  guardia imprime un error y la informacion
+				 *  con los comandos disponibles.
+				 * */
+				
 				String[] comandosCompuestos = comando.split(" ", 2);
 				
 				if (comandosCompuestos.length == 2) {
@@ -325,10 +375,20 @@ public class c_rmifs {
 								} else {
 									System.out.println(subidaArchivo);
 								}	
-									
-						      } catch(FileNotFoundException e){
+							
+						      }
+							/*
+							 * Excepcion que controla la existencia del archivo
+							 * 	buscado.  
+							 */
+							catch(FileNotFoundException e){
 						    	  System.out.println("El archivo " +nombreArchivo + " no se encuentra en el directorio actual.\n");
-						      } catch (IOException e) {
+						      } 
+							/*
+							 * Excepcion que controla la lectura del 
+							 * 	archivo.
+							 */
+							catch (IOException e) {
 						    	  System.out.println("Problemas procesando el archivo " + nombreArchivo + ".\n");
 						      } 
 							
@@ -339,7 +399,9 @@ public class c_rmifs {
 						try {
 							
 							if (mostrarArchivosLocales(nombreArchivo)) { 
-								
+								/* 
+								 * Si el archivo ya existe se pregunta por sobreescribirlo.
+								 */
 								System.out.println("El archivo " + nombreArchivo + " ya existe en el directorio actual." +
 										"\n¿Desea sobreescribirlo?(si/no)");
 								if (!System.console().readLine().equals("si")) {
@@ -389,6 +451,11 @@ public class c_rmifs {
 					}
 				}
 				
+				/* 
+				 * Mensaje que se imprime si se elige una opcion
+				 *	invalida
+				 */
+				
 				System.out.println ( "Opcion invalida. Intente de nuevo.\n" );
 				
 				System.out.println 
@@ -412,7 +479,13 @@ public class c_rmifs {
 					"\n" );
 				
 			}
-		} catch (RemoteException re) {
+			
+		} 
+		/*
+		 * Excepcion que controla la conexion con 
+		 * 	el servidor de archivos.  
+		 */
+		catch (RemoteException re) {
 			System.out.println ();
 			System.out.println ("Problemas de conexion con el servidor.");
 			System.exit(0);
