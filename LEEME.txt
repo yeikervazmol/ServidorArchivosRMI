@@ -4,9 +4,9 @@ Vazquez, Yeiker	09-10882
 2 de diciembre de 2013
 
 
-1. Protocolo
-	Se utiliza el protocolo TCP dado que se debe tener la certeza de que todos
-los paquetes enviados lleguen a su destino.
+1. Esquema
+	Se utiliza el esquema de programación cliente/servidor utilizando
+	mecanismos de invocación remota de métodos (RMI).
 
 2. Decisiones de diseño
 	- Cuando ocurren errores de autenticacion, no se encuentra un archivo
@@ -20,6 +20,8 @@ los paquetes enviados lleguen a su destino.
 	- Si alguno de los servidores deja de funciona, su cliente no informara al
 	respecto de forma inmediata, sino hasta que intente utilizar alguno de sus
 	servicios.
+	- Se asume que  el archivo de usuarios que recibe el programa c_rmifs.java
+	solamente posee una linea con el nombre y clave del usuario.
 
 4. Compilacion del proyecto
 	Para compilar el proyecto se debe hacer la instruccion make.
