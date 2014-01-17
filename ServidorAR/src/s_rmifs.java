@@ -14,15 +14,27 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 
 public class s_rmifs {
-	
+
+	/**
+	 * Variables globales.
+	 */
 	public static String host = "";
 	public static String puertolocal = "";
 	public static String puerto = "";
 	public static String comando;
-	// Interfaces para la conexion 
+	/**
+	 * Interfaz que permite la invocacion remota
+	 *   los metodos del servidor.
+	 **/
 	public static Servicios c;
 
-	
+	/**
+	 * s_rmisf:
+	 * 	Constructor de la clase.
+	 * 	Se encarga de establecer el puerto del servicio
+	 *  mediante el cual los clientes se conectaran.
+	 *   
+	 */
 	public s_rmifs() {
 		try {
 			c = new ServiciosImpl(host, puerto);
@@ -38,12 +50,24 @@ public class s_rmifs {
 		}
 	}
 	
+	/**
+	 * main:
+	 * 	Funcion principal del s_rmifs.
+	 * 
+	 * @param Argumentos enviados.
+	 * 
+	 */
 	public static void main(String args[]) {
 		
 		int argv = args.length;
-		// Verificacion de que no se repite algun parametro.
+		/** 
+		 * Variable que verifica de que no se
+		 *  repita algun parametro en la invocacion
+		 *  del programa cliente.
+		 */
 		Boolean[] opciones = { false, false, false };
 		
+		/* Verificamos si cumple la sintaxis de invocacion del programa */
 		if (argv != 6){
 			System.out.println ("Sintaxis de invocacion incorrecta.");
 			System.out.println("\nSintaxis de invocacion: ");
@@ -73,14 +97,26 @@ public class s_rmifs {
 			}
 		}
 		
+		/* RMI */
 		new s_rmifs();
 		
 		try {
 			c.inicializarLog();
-		} catch (RemoteException e1) {
-			e1.printStackTrace();
+		} 
+		/*
+		 * Excepcion que controla la conexion con 
+		 * 	el servidor.  
+		 */
+		catch (RemoteException e1) {
+			System.out.println ();
+			System.out.println ("Problemas de conexion con el servidor.");
+			System.exit(0);
 		}
-		
+
+		/* 
+		 * Verificamos la correctitud de los comandos recibidos por  terminal 
+		 * y envia al servidor dicho mensaje para su debida respuesta. 
+		 */
 		while (true) {
 			comando = System.console().readLine();
 			if (comando.equals("log")) {	
@@ -89,7 +125,6 @@ public class s_rmifs {
 					System.out.println(c.entregarLog("09108550910882"));
 					
 				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			} else if (comando.equals("sal")) {
